@@ -3,9 +3,7 @@ Section: net
 Priority: optional
 Maintainer: Vincent Bernat <bernat@debian.org>
 Build-Depends: debhelper (>= 9),
-               cdbs,
                autotools-dev,
-               dh-autoreconf,
                libsnmp-dev,
                libxml2-dev,
                libevent-dev (>= 2.0.5),
