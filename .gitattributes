@@ -1,0 +1,3 @@
+# Keep app-icon folder local to this fork — never overwrite from upstream
+app-icon/ merge=ours
+app-icon/** merge=ours
