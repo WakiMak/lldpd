@@ -9,10 +9,33 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Sync fork
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4
+      - name: Checkout fork
+        uses: actions/checkout@v4
         with:
-          upstream_sync_repo: lldpd/lldpd
-          upstream_sync_branch: master
-          target_sync_branch: master
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Backup app-icon folder
+        run: |
+          cp -r app-icon /tmp/app-icon-backup || true
+
+      - name: Add upstream remote
+        run: |
+          git remote add upstream https://github.com/lldpd/lldpd.git || true
+          git fetch upstream
+
+      - name: Merge upstream into master
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git merge upstream/master --no-edit || true
+
+      - name: Restore app-icon folder
+        run: |
+          rm -rf app-icon
+          cp -r /tmp/app-icon-backup app-icon || true
+          git add app-icon/
+          git diff --cached --quiet || git commit -m "chore: restore app-icon after upstream sync"
+
+      - name: Push to fork
+        run: git push origin master
